@@ -1,3 +1,15 @@
+# 没有数据响应式的效果
+```
+let a=1
+let b=2
+let c=a+b
+
+console.log(c)//3
+
+a=2
+console.log(c)// 想得到4，却得到3
+```
+
 # vue概念
 - 数据劫持
 - 依赖收集
