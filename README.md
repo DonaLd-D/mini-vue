@@ -24,7 +24,7 @@ Object.keys(data).forEach(key=>{
 })
 
 vm.a=2
-console.log(data.a)
+console.log(data.a) //2
 ```
 
 # Proxy实现数据响应式
@@ -35,6 +35,7 @@ let data={
 }
 
 let vm=new Proxy(data,{
+    //target指向data
     get(target,key){
         return target[key]
     },
@@ -45,7 +46,7 @@ let vm=new Proxy(data,{
 })
 
 vm.a=2
-console.log(data.a)
+console.log(data.a) //2
 ```
 
 # vue类
