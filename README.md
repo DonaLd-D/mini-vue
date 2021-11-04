@@ -76,3 +76,45 @@ class Vue{
 }
 ```
 
+# observer类
+```
+class Observer{
+    constructor(data){
+        this.walk(data)
+    }
+    walk(data){
+        if(!data||typeof data!='object') return
+        Object.keys(data).forEach(key=>{
+            this.defineReactive(data,key)
+        })
+    }
+    defineReactive(obj,key){
+        this.walk(obj[key])
+        let self=this
+        Object.defineProperty(obj,key,{
+            enumerable:true,
+            configurable:true,
+            get(){
+                return obj[key]
+            },
+            set(newValue){
+                if(obj[key]==newValue) return
+                obj[key]=newValue
+                self.walk(obj[key])
+            }
+        })
+    }
+}
+```
+```
+class Vue{
+    constructor(options) {
+        //...
+        new Observer(this.$data) //把数据vue实例的数据处理成响应式并被template使用
+    }
+    //把数据处理成响应式并挂载在vue实例
+    proxyData(data){
+
+    }
+}
+```
