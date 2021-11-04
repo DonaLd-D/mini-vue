@@ -89,6 +89,7 @@ class Observer{
         })
     }
     defineReactive(obj,key){
+        //如果该key的值是对象，也处理为响应式的
         this.walk(obj[key])
         let self=this
         Object.defineProperty(obj,key,{
@@ -100,6 +101,7 @@ class Observer{
             set(newValue){
                 if(obj[key]==newValue) return
                 obj[key]=newValue
+                如果赋的新值是对象，也处理成响应式的
                 self.walk(obj[key])
             }
         })
@@ -110,7 +112,7 @@ class Observer{
 class Vue{
     constructor(options) {
         //...
-        new Observer(this.$data) //把数据vue实例的数据处理成响应式并被template使用
+        new Observer(this.$data) //把vue实例的数据处理成响应式并被template使用
     }
     //把数据处理成响应式并挂载在vue实例
     proxyData(data){
