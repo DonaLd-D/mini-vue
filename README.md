@@ -1,49 +1,77 @@
-# object.defineproperty和proxy的区别
+# defineproperty实现数据响应式
 
 ```
-//Object.defineProperty实现数据响应式
-
-let vm={
-    id:"juejin",
-    name:"掘金"
+//要被转换成响应式的数据
+let data={
+    a:1,
+    b:2
 }
-let keys=Object.keys(vm)
-keys.forEach(key=>{
-    let value=vm[key]
+//vm模拟vue实例，data的数据转换成响应式的同时，挂载在vue的实例上
+let vm={}
+
+Object.keys(data).forEach(key=>{
     Object.defineProperty(vm,key,{
+        enumerable:true,
+        configurable:true,
         get(){
-            console.log("执行get")
-            return value
+            return data[key]
         },
-        set(newValue){
-            console.log("执行set")
-            if(newValue!=value){
-                value=newValue
-            }
+        set(newvalue){
+            if(data[key]==newvalue) return
+            data[key]=newvalue
         }
     })
 })
-vm.id="csdn"
-console.log(vm,vm.id,vm.name)
 
-//proxy实现数据响应式
-let _vm={
-    id:'juejin',
-    name:'掘金'
+vm.a=2
+console.log(data.a)
+```
+
+# Proxy实现数据响应式
+```
+let data={
+    a:1,
+    b:2
 }
-let newvm=new Proxy(_vm,{
+
+let vm=new Proxy(data,{
     get(target,key){
-        console.log('执行get')
         return target[key]
     },
-    set(targrt,key,newValue){
-        console.log('执行set')
-        if(targrt[key]!=newValue){
-            targrt[key]=newValue
-        }
+    set(target,key,newValue){
+        if(target[key]==newValue) return
+        target[key]=newValue
     }
 })
-newvm.use='codercao'
-newvm.id='csdn'
-console.log(newvm)
+
+vm.a=2
+console.log(data.a)
 ```
+
+# vue类
+```
+class Vue{
+    constructor(options){
+        this.$options=options?options:{}
+        this.$el=typeof options.el=='string'?document.querySelector(options.el):options.el
+        this.$data=options.data?options.data:{}
+        this.proxyData(this.$data)
+    }
+    proxyData(data){
+        Object.keys(data).forEach(key=>{
+            Object.defineProperty(this,key,{
+                enumerable:true,
+                configurable:true,
+                get(){
+                    return data[key]
+                },
+                set(newValue){
+                    if(data[key]==newValue) return
+                    data[key]=newValue
+                }
+            })
+        })
+    }
+}
+```
+
